@@ -107,7 +107,7 @@ time_range = np.linspace(0, 8, 100)
 g_t_range = g_t_numeric(time_range)
 
 # Graficación
-plt.figure(figsize=(15, 5))  # Adjust figure size if needed
+plt.figure(figsize=(15, 5))
 
 # Dominio del tiempo
 
@@ -134,8 +134,6 @@ plt.ylabel('Magnitud')
 plt.legend()
 plt.grid(True)
 
-# Adjust layout to prevent overlap
+# Mostrar la gráfica
 plt.tight_layout()
-
-# Show both plots
 plt.show()
