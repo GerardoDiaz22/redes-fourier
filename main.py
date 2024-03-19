@@ -90,6 +90,11 @@ g_t = (
     )
 )
 
+# Computamos los armonicos
+harmonics = np.arange(1, component_num + 1)
+a_n_magnitude = np.abs([a_n.subs(n_component, h) for h in harmonics])
+b_n_magnitude = np.abs([b_n.subs(n_component, h) for h in harmonics])
+
 # Graficación de resultados
 
 # Se convierte la función simbólica a una función numérica para poder evaluarla
@@ -102,8 +107,35 @@ time_range = np.linspace(0, 8, 100)
 g_t_range = g_t_numeric(time_range)
 
 # Graficación
+plt.figure(figsize=(15, 5))  # Adjust figure size if needed
+
+# Dominio del tiempo
+
+# Seleccionar el primer plot
+plt.subplot(1, 2, 1)
+
+# Configuración de la gráfica
 plt.plot(time_range, g_t_range)
-plt.title("Serie de Fourier")
-plt.xlabel("tiempo t")
+plt.title("Dominio del Tiempo")
+plt.xlabel("Tiempo (t)")
 plt.ylabel("g(t)")
+
+# Dominio de la frecuencia
+
+# Seleccionar el segundo plot
+plt.subplot(1, 2, 2)
+
+# Configuración de la gráfica
+plt.stem(harmonics, a_n_magnitude, label='Magnitud de a_n')
+plt.stem(harmonics, b_n_magnitude, label='Magnitud de b_n', markerfmt='rx', linefmt='r-', basefmt=" ")
+plt.title('Dominio de la Frecuencia')
+plt.xlabel('Armónico (n)')
+plt.ylabel('Magnitud')
+plt.legend()
+plt.grid(True)
+
+# Adjust layout to prevent overlap
+plt.tight_layout()
+
+# Show both plots
 plt.show()
