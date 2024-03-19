@@ -1,101 +1,109 @@
+# Encontrar la serie de fourier para 10 componentes de la siguiente función:
+# g(t): 0, 0 <= t < 1;
+#       1, 1 <= t < 3;
+#       0, 3 <= t < 6;
+#       1, 6 <= t < 7;
+#       0, 7 <= t < 8;
+# El periodo es T = 8.
+
+# Importación de librerias
 import sympy as smp
-import matplotlib.pyplot as plt
 import numpy as np
-from scipy.integrate import cumulative_trapezoid
+import matplotlib.pyplot as plt
 
-t = smp.symbols('t', real=True)
-n = smp.symbols('n', real=True)
+# Definición de variables
+period_T = 8
 
-T = 8 #Periodo
+# Definición de simbolos
+t_time = smp.symbols("t", real=True)
+n_component = smp.symbols("n", integer=True)
 
-n_armonicos = int(input("Ingrese el armonico que desea observar: "))
+# Definición de funciones
+g_t_1 = 0
+g_t_2 = 1
+g_t_3 = 0
+g_t_4 = 1
+g_t_5 = 0
 
-#Se obtiene el valor de g(t) mediante una una funcion definida a trozos
-# donde g(t) : 0; 0 < x < 1
-#              1; 1 < x < 3
-#              0; 3 < x < 6
-#              1; 6 < x < 7
-#              0; 7 < x < 8
+# Entrada del usuario
+component_num = int(input("Ingrese el número de componentes: "))
 
-integral_c = 0 #Acumulado de la integral de c
-f = 0
-integral_c = smp.integrate(f, (t, 0, 1)) + integral_c
+# Hallamos los coeficientes a_n, b_n y c
+# a_n = (2/T) * integral{0}{period_T} de g(t) sin(2 * pi * n * t / period_T) dt
+# b_n = (2/T) * integral{0}{period_T} de g(t) cos(2 * pi * n * t / period_T) dt
+# c = (2/T) * integral{0}{period_T} de g(t) dt
 
-f = 1
-integral_c = smp.integrate(f, (t, 1, 3)) + integral_c
+# a_n
+a_n_1 = (2 / period_T) * smp.integrate(
+    g_t_1 * smp.sin(2 * smp.pi * n_component * t_time / period_T), (t_time, 0, 1)
+)
+a_n_2 = (2 / period_T) * smp.integrate(
+    g_t_2 * smp.sin(2 * smp.pi * n_component * t_time / period_T), (t_time, 1, 3)
+)
+a_n_3 = (2 / period_T) * smp.integrate(
+    g_t_3 * smp.sin(2 * smp.pi * n_component * t_time / period_T), (t_time, 3, 6)
+)
+a_n_4 = (2 / period_T) * smp.integrate(
+    g_t_4 * smp.sin(2 * smp.pi * n_component * t_time / period_T), (t_time, 6, 7)
+)
+a_n_5 = (2 / period_T) * smp.integrate(
+    g_t_5 * smp.sin(2 * smp.pi * n_component * t_time / period_T), (t_time, 7, 8)
+)
+a_n = a_n_1 + a_n_2 + a_n_3 + a_n_4 + a_n_5
 
-f = 0
-integral_c = smp.integrate(f, (t, 3, 6)) + integral_c
+# b_n
+b_n_1 = (2 / period_T) * smp.integrate(
+    g_t_1 * smp.cos(2 * smp.pi * n_component * t_time / period_T), (t_time, 0, 1)
+)
+b_n_2 = (2 / period_T) * smp.integrate(
+    g_t_2 * smp.cos(2 * smp.pi * n_component * t_time / period_T), (t_time, 1, 3)
+)
+b_n_3 = (2 / period_T) * smp.integrate(
+    g_t_3 * smp.cos(2 * smp.pi * n_component * t_time / period_T), (t_time, 3, 6)
+)
+b_n_4 = (2 / period_T) * smp.integrate(
+    g_t_4 * smp.cos(2 * smp.pi * n_component * t_time / period_T), (t_time, 6, 7)
+)
+b_n_5 = (2 / period_T) * smp.integrate(
+    g_t_5 * smp.cos(2 * smp.pi * n_component * t_time / period_T), (t_time, 7, 8)
+)
+b_n = b_n_1 + b_n_2 + b_n_3 + b_n_4 + b_n_5
 
-f = 1
-integral_c = smp.integrate(f, (t, 6, 7)) + integral_c
+# c
+c_1 = (2 / period_T) * smp.integrate(g_t_1, (t_time, 0, 1))
+c_2 = (2 / period_T) * smp.integrate(g_t_2, (t_time, 1, 2))
+c_3 = (2 / period_T) * smp.integrate(g_t_3, (t_time, 3, 6))
+c_4 = (2 / period_T) * smp.integrate(g_t_4, (t_time, 6, 7))
+c_5 = (2 / period_T) * smp.integrate(g_t_5, (t_time, 7, 8))
+c = c_1 + c_2 + c_3 + c_4 + c_5
 
-f = 0
-integral_c = smp.integrate(f, (t, 7, 8)) + integral_c
+# Computamos la serie de fourier
+g_t = (
+    c / 2
+    + smp.Sum(
+        a_n * smp.sin(2 * smp.pi * n_component * t_time / period_T),
+        (n_component, 1, component_num),
+    )
+    + smp.Sum(
+        b_n * smp.cos(2 * smp.pi * n_component * t_time / period_T),
+        (n_component, 1, component_num),
+    )
+)
 
-c = (2/T)*integral_c
+# Graficación de resultados
 
-#------------------------------------+
+# Se convierte la función simbólica a una función numérica para poder evaluarla
+g_t_numeric = smp.lambdify(t_time, g_t, modules="numpy")
 
-integral_an = 0 #Acumulado de la integral de c
-integral_bn = 0
-total_sum = 0
-aux1 = 0
-aux2 = 0
+# Esblecimiento de rango de tiempo
+time_range = np.linspace(0, 8, 100)
 
-#para no escribir tanto solo integrare los intervalos donde g(t) no sea 0
+# Evaluación la función sobre el rango de tiempo
+g_t_range = g_t_numeric(time_range)
 
-for i in range(n_armonicos):# Sumatoria donde (i+1) es equivalente a "n"
-    #inicio integral an-----------------------------------
-    f = smp.sin(2 * smp.pi * (i+1) * (1/T) * t)
-    integral_an = smp.integrate(f, (t, 1, 3)) + integral_an
-
-    f = smp.sin(2 * smp.pi * (i+1) * (1/T) * t)
-    integral_an = smp.integrate(f, (t, 6, 7)) + integral_an
-
-    an = integral_an * (2/T)
-    #fin integral an-----------------------------------
-
-    #multiplicacion de an con sen(2 (pi)nft)
-    aux1 = an * smp.sin(2 * smp.pi * (i+1) * (1/T) * t)
-
-
-    #inicio integral bn-----------------------------------
-    f = smp.cos(2 * smp.pi * (i+1) * (1/T) * t)
-    integral_bn = smp.integrate(f, (t, 1, 3)) + integral_bn
-
-    f = smp.cos(2 * smp.pi * (i+1) * (1/T) * t)
-    integral_bn = smp.integrate(f, (t, 6, 7)) + integral_bn
-
-    bn = integral_bn * (2/T)
-    #fin integral bn-----------------------------------
-
-    #multiplicacion de bn con sen(2 (pi)nft)
-    aux2 = bn * smp.cos(2 * smp.pi * (i+1) * (1/T) * t)
-
-    #suma del lado an y del lado bn
-    total_sum = aux1 + aux2 + total_sum
-
-    #reseteo de variables
-    integral_an = 0
-    integral_bn = 0
-armonico = ((1/2) * c ) + total_sum
-
-
-#-----------------------------------------------------------------------------de aqui para abajo no entiendo muy bien, esto lo hizo la ia
-
-
-armonico_num = smp.lambdify(t, armonico, modules=['numpy'])
-
-# Crear un array de valores de tiempo
-t_values = np.linspace(0, 8, 100)
-
-# Evaluar la función "armonico" en los valores de tiempo
-armonico_values = armonico_num(t_values)
-
-# Graficar el resultado
-plt.plot(t_values, armonico_values)
-plt.xlabel('Tiempo')
-plt.ylabel('Valor del armónico')
-plt.title('Gráfico del valor del armónico en función del tiempo')
+# Graficación
+plt.plot(time_range, g_t_range)
+plt.title("Serie de Fourier")
+plt.xlabel("tiempo t")
+plt.ylabel("g(t)")
 plt.show()
